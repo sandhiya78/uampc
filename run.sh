@@ -8,7 +8,7 @@ if [ -z "$(ls -A ${MYSQL_DATA_DIR})" ]; then
     SOCKET="$(mysqld --verbose --help | awk -v conf='socket' '$1 == conf && /^[^ \t]/ { sub(/^[^ \t]+[ \t]+/, ""); print; exit }')"
     mysqld --daemonize --skip-networking --socket="${SOCKET}" --user=mysql
     mysql -uroot --protocol=socket --socket="${SOCKET}" <<<"ALTER USER USER() IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';UPDATE mysql.user SET Host='%' WHERE User='root' AND Host='localhost';"
-    mysqladmin shutdown --socket=/var/run/mysqld/mysqld.sock -uroot -p${MYSQL_ROOT_PASSWORD}
+    mysqladmin shutdown --socket="${SOCKET}" -uroot -p${MYSQL_ROOT_PASSWORD}
 fi
 chown -R mysql:mysql ${MYSQL_DATA_DIR}
 chmod 750 ${MYSQL_DATA_DIR}
